@@ -1,37 +1,35 @@
-# TASKFLOW API Dokümantasyonu
+# TASKFLOW API Tasarım Dokümanı
 
-Yerel taban adresi: `http://localhost:3000`. Görev verileri JSON olarak gönderilir. Yanıtlar `{ "success": true, "data": ... }` biçimindedir.
+Taban adresi: http://localhost:3000. İstek ve yanıt gövdeleri JSON biçimindedir. Başarılı yanıtlar success: true, hata yanıtları success: false alanı içerir.
 
-## Sağlık kontrolü
+## Görev uçları
 
-`GET /api/health` — Sunucu durumunu döndürür.
+### Görev oluşturma
 
-## Görevler
+POST /api/tasks — Başarılı olduğunda 201 Created döndürür. İstek gövdesinde title zorunludur. İsteğe bağlı alanlar: description, status, priority, assignee, project.
 
-### Görev oluştur
+### Görevleri listeleme
 
-`POST /api/tasks` — `201 Created`. Gövde: `title` (zorunlu), `description`, `status`, `priority`, `assignee`, `project`. Durum varsayılanı `pending`, öncelik varsayılanı `medium` olur.
+GET /api/tasks — 200 OK döndürür. Yanıt, görev sayısını count alanında ve görev dizisini data alanında içerir.
 
-### Görevleri listele
+### Görev detayı
 
-`GET /api/tasks` — `200 OK`. İsteğe bağlı sorgular: `status`, `priority`, `assignee`, `project`, `search`, `page`, `limit`, `sortBy`, `order`. Yanıt sayım, toplam, sayfa, limit ve görev listesini içerir.
+GET /api/tasks/:id — Bulunan görev için 200 OK; geçersiz kimlik için 400 Bad Request, bulunmayan görev için 404 Not Found.
 
-### Görev ayrıntısı
+### Görev güncelleme
 
-`GET /api/tasks/:id` — `200 OK`; bulunmayan görev için `404`, geçersiz kimlik için `400`.
+PUT /api/tasks/:id — Gönderilen görev alanlarını günceller ve 200 OK döndürür. id ve createdAt değişmez; updatedAt yenilenir. Görev bulunamazsa 404 döner.
 
-### Görevi güncelle
+### Görev silme
 
-`PUT /api/tasks/:id` — `200 OK`. Gövde, güncellenecek bir veya daha fazla görev alanını içerebilir. `id`, `createdAt` korunur; `updatedAt` yenilenir. Bulunmayan görev `404` döndürür.
+DELETE /api/tasks/:id — Görevi siler ve silinen kaydı 200 OK yanıtında döndürür. Görev bulunamazsa 404 döner.
 
-### Görevi sil
+## Görev alanları
 
-`DELETE /api/tasks/:id` — `200 OK`; silinen görev yanıt verisinde döner. Bulunmayan görev `404` döndürür.
+status: pending veya completed. priority: low, medium veya high. Bu alanlar yeni görev oluştururken gönderilmezse varsayılanları uygulanır.
 
-## Özet raporu
+## Temel hata durumları
 
-`GET /api/reports/summary` — Toplam görev sayısını ve durum/öncelik kırılımlarını döndürür.
-
-## Hata yanıtları
-
-Doğrulama veya bozuk JSON için `400`, bulunmayan endpoint veya kayıt için `404`, beklenmeyen sunucu hatası için `500` döner. Hata gövdesi `{ "success": false, "message": "..." }` biçimindedir.
+- 400: Geçersiz JSON, boş/zorunlu alan veya geçersiz kimlik.
+- 404: Görev ya da uç nokta bulunamadı.
+- 500: Beklenmeyen sunucu hatası.
