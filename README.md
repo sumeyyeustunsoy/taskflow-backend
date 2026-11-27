@@ -1,61 +1,52 @@
 # TASKFLOW Backend
 
-Node.js ve Express.js ile geliştirilmiş görev ve proje yönetimi REST API'si.
+Node.js ve Express.js ile geliştirilmiş görev yönetimi REST API'si. Görevler JSON dosyasında saklanır.
 
 ## Gereksinimler
 
 - Node.js 18 veya üzeri
 - npm
+- Postman
 
 ## Kurulum ve çalıştırma
 
-```bash
-npm install
-npm run dev
-```
+    npm install
+    npm run dev
 
-Geliştirme komutu yerleşik `node --watch` özelliğini kullanır. Normal çalıştırma için `npm start` komutunu kullanın. Varsayılan adres `http://localhost:3000`; farklı port için `PORT` ortam değişkeni ayarlanabilir. Sağlık kontrolü: `GET /api/health`.
+Geliştirme sunucusu http://localhost:3000 adresinde başlar. Durdurmak için terminalde Ctrl+C kullanın. Normal çalıştırma için npm start komutu kullanılabilir.
 
-## Uç noktalar
+## API uçları
 
 | Metot | Uç nokta | Açıklama |
 |---|---|---|
-| `POST` | `/api/tasks` | Görev oluşturur |
-| `GET` | `/api/tasks` | Görevleri listeler; filtre, arama ve sayfalama destekler |
-| `GET` | `/api/tasks/:id` | Görev ayrıntısını getirir |
-| `PUT` | `/api/tasks/:id` | Görev alanlarını günceller |
-| `DELETE` | `/api/tasks/:id` | Görevi siler |
-| `GET` | `/api/reports/summary` | Durum ve öncelik sayılarını döndürür |
+| POST | /api/tasks | Görev oluşturur |
+| GET | /api/tasks | Tüm görevleri listeler |
+| GET | /api/tasks/:id | Bir görevin ayrıntısını getirir |
+| PUT | /api/tasks/:id | Görev bilgilerini günceller |
+| DELETE | /api/tasks/:id | Görevi siler |
 
-Görev gövdesi örneği:
+Yeni görev örneği:
 
-```json
-{
-  "title": "API dokümantasyonunu hazırla",
-  "description": "CRUD uçlarını belgele",
-  "status": "pending",
-  "priority": "high",
-  "assignee": "Sümeyye",
-  "project": "TASKFLOW"
-}
-```
+    {
+      "title": "API dokümantasyonunu hazırla",
+      "description": "Görev uçlarını belgele",
+      "status": "pending",
+      "priority": "high",
+      "assignee": "Sümeyye",
+      "project": "TASKFLOW"
+    }
 
-`title` zorunludur. `status`: `pending` / `completed`; `priority`: `low` / `medium` / `high`. Bu alanlar gönderilmezse varsayılan değerler uygulanır.
+title zorunludur. status için pending veya completed; priority için low, medium veya high kullanılabilir. Gönderilmediklerinde varsayılanlar sırasıyla pending ve medium olur.
 
-## Listeleme seçenekleri
+## Postman ile test ve teslim
 
-`GET /api/tasks?status=pending&priority=high&assignee=Sümeyye&project=TASKFLOW&search=API&page=1&limit=10&sortBy=createdAt&order=desc`
-
-## Veri ve loglar
-
-Görevler `src/data/tasks.json` içinde kalıcı olarak saklanır. Her istek method, path ve ISO zaman damgasıyla konsola kaydedilir. Depolama yazımları geçici dosya üzerinden atomik olarak tamamlanır.
-
-## Postman ile CRUD kanıtı
-
-`postman/Taskflow.postman_collection.json` koleksiyonunu Postman'e içe aktarın. Önce API'yi başlatın, sonra `TASKFLOW CRUD` klasörünü Runner'da sırayla çalıştırın. Koleksiyon oluşturma, listeleme, detay, güncelleme ve silme adımlarını doğrular; oluşturulan görev kimliğini sonraki isteklere aktarır. Ekran görüntülerini Postman Runner sonuçları görünecek şekilde `screenshots/` klasörüne kaydedin.
+1. postman/Taskflow.postman_collection.json dosyasını Postman'e içe aktarın.
+2. API çalışırken koleksiyondaki istekleri sırayla gönderin: görev oluşturma, listeleme, detay, güncelleme ve silme.
+3. Her yanıtın beklenen HTTP durum kodunu ve görev verisini döndürdüğünü kontrol edin.
+4. Kendi Postman sonuç ekran görüntülerinizi screenshots/ klasörüne kaydedin.
 
 ## Proje belgeleri
 
-- [Proje tanıtımı](PROJECT_OVERVIEW.md)
-- [API dokümantasyonu](API_DOCUMENTATION.md)
-- [Postman koleksiyonu](postman/Taskflow.postman_collection.json)
+- Proje tanıtımı: PROJECT_OVERVIEW.md
+- API tasarım dokümanı: API_DOCUMENTATION.md
+- Postman koleksiyonu: postman/Taskflow.postman_collection.json
