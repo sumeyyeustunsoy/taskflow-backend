@@ -10,7 +10,7 @@ POST /api/tasks — Başarılı olduğunda 201 Created döndürür. İstek gövd
 
 ### Görevleri listeleme
 
-GET /api/tasks — 200 OK ve görev dizisi döndürür.
+GET /api/tasks — 200 OK döndürür. Yanıt, görev sayısını count alanında ve görev dizisini data alanında içerir.
 
 ### Görev detayı
 
