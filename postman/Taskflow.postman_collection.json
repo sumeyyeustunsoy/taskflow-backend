@@ -1,0 +1,53 @@
+{
+  "info": {
+    "name": "TASKFLOW CRUD",
+    "description": "Görev oluşturma, listeleme, detay, güncelleme ve silme akışını doğrular.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "taskId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "TASKFLOW CRUD",
+      "item": [
+        {
+          "name": "1 - Görev oluştur",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Postman CRUD görevi\",\n  \"description\": \"Teslim akışı doğrulaması\",\n  \"status\": \"pending\",\n  \"priority\": \"high\",\n  \"assignee\": \"TASKFLOW ekibi\",\n  \"project\": \"TASKFLOW\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/tasks"
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('201 Created döner', () => pm.response.to.have.status(201));", "const body = pm.response.json();", "pm.test('Görev kimliği ve başlığı döner', () => { pm.expect(body.success).to.eql(true); pm.expect(body.data.id).to.be.a('number'); pm.expect(body.data.title).to.eql('Postman CRUD görevi'); });", "pm.collectionVariables.set('taskId', body.data.id);"] } }]
+        },
+        {
+          "name": "2 - Görevleri listele",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/tasks" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('200 OK döner', () => pm.response.to.have.status(200));", "const body = pm.response.json();", "pm.test('Görev listesi döner', () => { pm.expect(body.success).to.eql(true); pm.expect(body.data).to.be.an('array'); pm.expect(body.data.some(task => task.id === Number(pm.collectionVariables.get('taskId')))).to.eql(true); });"] } }]
+        },
+        {
+          "name": "3 - Görev detayını getir",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/tasks/{{taskId}}" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('200 OK döner', () => pm.response.to.have.status(200));", "pm.test('İstenen görev döner', () => pm.expect(pm.response.json().data.id).to.eql(Number(pm.collectionVariables.get('taskId'))));"] } }]
+        },
+        {
+          "name": "4 - Görevi güncelle",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\",\n  \"priority\": \"medium\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/tasks/{{taskId}}"
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('200 OK döner', () => pm.response.to.have.status(200));", "pm.test('Görev güncellenir', () => { const body = pm.response.json(); pm.expect(body.data.status).to.eql('completed'); pm.expect(body.data.priority).to.eql('medium'); });"] } }]
+        },
+        {
+          "name": "5 - Görevi sil",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/tasks/{{taskId}}" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('200 OK döner', () => pm.response.to.have.status(200));", "pm.test('Silinen görev döner', () => pm.expect(pm.response.json().data.id).to.eql(Number(pm.collectionVariables.get('taskId'))));"] } }]
+        }
+      ]
+    }
+  ]
+}
