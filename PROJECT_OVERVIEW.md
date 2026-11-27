@@ -2,16 +2,30 @@
 
 ## Amaç ve senaryo
 
-TASKFLOW, bir yazılım ekibinin görevlerini, sorumlularını ve önceliklerini takip etmesi için Node.js ve Express.js ile geliştirilmiş bir REST API'dir. İstemciler görev oluşturabilir, görevleri listeleyip filtreleyebilir, tek bir görevin ayrıntısını görüntüleyebilir, güncelleyebilir ve silebilir.
+TASKFLOW, bir yazılım ekibinin görevlerini, sorumlularını ve önceliklerini takip etmesi için geliştirilen bir REST API'dir. Kullanıcılar görev oluşturabilir, görevleri listeleyebilir, ayrıntı görüntüleyebilir, güncelleyebilir ve silebilir.
 
 ## Veri modeli
 
-Her görev; sayısal ve benzersiz `id`, zorunlu `title`, `description`, `status`, `priority`, `assignee`, `project`, `createdAt` ve `updatedAt` alanlarını taşır. Durum `pending` veya `completed`; öncelik `low`, `medium` veya `high` değerlerinden biridir. Yeni görevlerde durum `pending`, öncelik `medium` olur. Veriler `src/data/tasks.json` içinde saklanır.
+Her görev şu alanlardan oluşur:
 
-## API ve mimari
+| Alan | Tür | Açıklama |
+|---|---|---|
+| id | Sayı | Otomatik oluşturulan benzersiz kimlik |
+| title | Metin | Zorunlu görev başlığı |
+| description | Metin | Görev açıklaması |
+| status | Metin | pending veya completed; varsayılan pending |
+| priority | Metin | low, medium veya high; varsayılan medium |
+| assignee | Metin | Sorumlu kişi |
+| project | Metin | İlişkili proje |
+| createdAt | ISO tarih | Oluşturulma zamanı |
+| updatedAt | ISO tarih | Son güncellenme zamanı |
 
-API, `/api/tasks` altında standart REST CRUD uçlarını sunar. Routing, controller, middleware ve veri deposu ayrı modüllerdedir. Her HTTP isteği, ISO 8601 zaman damgasıyla method ve path bilgilerini logger middleware'ine yazdırır. İstek doğrulaması açıklayıcı `400` yanıtları üretir; bulunmayan kayıtlar `404` döndürür. Filtreleme, arama, sayfalama ve özet rapor uçları ek kullanım kolaylığı sağlar.
+Görevler src/data/tasks.json dosyasında saklanır.
 
-## Teknolojiler
+## Sistem tasarımı
 
-Node.js, Express.js, Node.js `fs/promises` ve JSON dosya depolaması. Uygulama herhangi bir web arayüzüne bağlı değildir; Postman veya başka bir HTTP istemcisiyle kullanılabilir.
+Uygulama Node.js ve Express.js kullanır. src/app.js sunucuyu ve temel middleware'leri başlatır. İstek yolları src/routes/ altında; CRUD işlemleri src/controllers/ altında düzenlenmiştir. İstek logger'ı HTTP metodunu, yolu ve zaman damgasını konsola yazar. Görev verileri src/data/taskStore.js üzerinden okunup yazılır.
+
+## Kapsam
+
+Proje; görev CRUD işlemlerini, temel istek doğrulamasını, modüler routing yapısını ve logger middleware'ini kapsar. Bir web veya mobil arayüz içermez; API Postman gibi HTTP istemcileriyle kullanılabilir.
